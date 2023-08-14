@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './index.css'; 
 
 const GRID_SIZE = 6;
 const TOTAL_TILES = GRID_SIZE * GRID_SIZE;
@@ -11,17 +12,18 @@ const generateRandomNumbers = () => {
 const MemoryGame = () => {
   const [tiles, setTiles] = useState([]);
   const [selectedTiles, setSelectedTiles] = useState([]);
-  
+
   useEffect(() => {
     const randomNumbers = generateRandomNumbers();
     const initialTiles = randomNumbers.map((number, index) => ({
       id: index,
       number,
       flipped: false,
+      matched: false,
     }));
     setTiles(initialTiles);
   }, []);
-  
+
   const handleTileClick = (id) => {
     if (selectedTiles.length < 2) {
       const tileIndex = tiles.findIndex(tile => tile.id === id);
@@ -35,6 +37,16 @@ const MemoryGame = () => {
   useEffect(() => {
     if (selectedTiles.length === 2) {
       if (selectedTiles[0].number === selectedTiles[1].number) {
+        const updatedTiles = tiles.map(tile => {
+          if (tile.id === selectedTiles[0].id || tile.id === selectedTiles[1].id) {
+            return {
+              ...tile,
+              matched: true,
+            };
+          }
+          return tile;
+        });
+        setTiles(updatedTiles);
         setSelectedTiles([]);
       } else {
         setTimeout(() => {
@@ -55,10 +67,10 @@ const MemoryGame = () => {
         {tiles.map(tile => (
           <div
             key={tile.id}
-            className={`tile ${tile.flipped ? 'flipped' : ''}`}
-            onClick={() => !tile.flipped && handleTileClick(tile.id)}
+            className={`tile ${tile.flipped || tile.matched ? 'flipped' : ''}`}
+            onClick={() => (!tile.flipped && !tile.matched) && handleTileClick(tile.id)}
           >
-            {tile.flipped ? tile.number : ''}
+            {tile.flipped || tile.matched ? tile.number : ''}
           </div>
         ))}
       </div>

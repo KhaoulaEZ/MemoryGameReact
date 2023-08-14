@@ -42,3 +42,7 @@ body, h1, h2, h3, p, ul, li {
     cursor: default;
   }
   
+  .matched {
+    background-color: #66bb6a;
+    cursor: default;
+  }
